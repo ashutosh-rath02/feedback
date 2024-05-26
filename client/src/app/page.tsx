@@ -1,10 +1,12 @@
 import SectionContainer from "@/components/SectionContainer";
-import Image from "next/image";
 import { Icons } from "../../public/icons";
 import FeedbackContainer from "@/components/FeedbackContainer";
 import { Star } from "lucide-react";
+import { redis } from "@/lib/redis";
 
-export default function Home() {
+export default async function Home() {
+  const servedRequests = await redis.get("served-requests");
+
   return (
     <section className="min-h-screen bg-grid-zinc-50">
       <SectionContainer className="relative pb-24 pt-10 sm:pb-32 lg:pt-25 xl:pt-32 lg:pb-52">
@@ -35,7 +37,7 @@ text-balance mt—16 font-bold text—gray-900 text-5xl md:text—6xl"
 
             <div className="mt-12 flex flex-col sm:flex-row items-center sm:items-start gap-5 ">
               <div className="flex flex-col gap-1 justify-between items-center sm:items-start">
-                <div className="flex gap-0.5">
+                <div className="flex w-full gap-0.5 items-center justify-center">
                   <Star className="h-4 w-4 text-green-600 fill-green-600" />
                   <Star className="h-4 w-4 text-green-600 fill-green-600" />
                   <Star className="h-4 w-4 text-green-600 fill-green-600" />
@@ -43,7 +45,10 @@ text-balance mt—16 font-bold text—gray-900 text-5xl md:text—6xl"
                   <Star className="h-4 w-4 text-green-600 fill-green-600" />
                 </div>
                 <p>
-                  <span className="font-semibold">10</span> served requests
+                  <span className="font-semibold">
+                    {Math.ceil(Number(servedRequests) / 10) * 10}
+                  </span>{" "}
+                  served requests
                 </p>
               </div>
             </div>
