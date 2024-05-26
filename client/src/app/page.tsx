@@ -2,6 +2,7 @@ import SectionContainer from "@/components/SectionContainer";
 import Image from "next/image";
 import { Icons } from "../../public/icons";
 import FeedbackContainer from "@/components/FeedbackContainer";
+import { Star } from "lucide-react";
 
 export default function Home() {
   return (
@@ -31,6 +32,21 @@ text-balance mt—16 font-bold text—gray-900 text-5xl md:text—6xl"
             </h1>
 
             <FeedbackContainer />
+
+            <div className="mt-12 flex flex-col sm:flex-row items-center sm:items-start gap-5 ">
+              <div className="flex flex-col gap-1 justify-between items-center sm:items-start">
+                <div className="flex gap-0.5">
+                  <Star className="h-4 w-4 text-green-600 fill-green-600" />
+                  <Star className="h-4 w-4 text-green-600 fill-green-600" />
+                  <Star className="h-4 w-4 text-green-600 fill-green-600" />
+                  <Star className="h-4 w-4 text-green-600 fill-green-600" />
+                  <Star className="h-4 w-4 text-green-600 fill-green-600" />
+                </div>
+                <p>
+                  <span className="font-semibold">10</span> served requests
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </SectionContainer>
