@@ -3,13 +3,16 @@
 import SectionContainer from "@/components/SectionContainer";
 import { scaleLog } from "@visx/scale";
 import { Wordcloud } from "@visx/wordcloud";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text } from "@visx/text";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { submitFeedback } from "../actions";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:8080");
 
 interface DisplayPageProps {
   feedbackName: string;
@@ -19,8 +22,48 @@ interface DisplayPageProps {
 const COLORS = ["#143059", "#2F6B9A", "#82a6c2"];
 
 const DisplayPage = ({ feedbackName, initialData }: DisplayPageProps) => {
-  const [words, setwords] = useState(initialData);
+  const [words, setWords] = useState(initialData);
   const [input, setInput] = useState("");
+
+  useEffect(() => {
+    socket.emit("join-room", `room:${feedbackName}`);
+  }, []);
+
+  useEffect(() => {
+    socket.on("room-update", (message: string) => {
+      const data = JSON.parse(message) as {
+        text: string;
+        value: number;
+      }[];
+
+      data.map((newWord) => {
+        const isWordAlreadyIncluded = words.some(
+          (word) => word.text === newWord.text
+        );
+
+        if (isWordAlreadyIncluded) {
+          // increment
+          setWords((prev) => {
+            const before = prev.find((word) => word.text === newWord.text);
+            const rest = prev.filter((word) => word.text !== newWord.text);
+
+            return [
+              ...rest,
+              { text: before!.text, value: before!.value + newWord.value },
+            ];
+          });
+        } else if (words.length < 50) {
+          // add to state
+          setWords((prev) => [...prev, newWord]);
+        }
+      });
+    });
+
+    return () => {
+      socket.off("room-update");
+    };
+  }, [words]);
+
   const fontScale = scaleLog({
     domain: [
       Math.min(...words.map((d) => d.value)),
