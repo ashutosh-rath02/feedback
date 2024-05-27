@@ -12,7 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { submitFeedback } from "../actions";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:8080");
+const socket = io("https://feedback-zco7.onrender.com");
 
 interface DisplayPageProps {
   feedbackName: string;
