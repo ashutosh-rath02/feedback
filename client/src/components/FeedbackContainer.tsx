@@ -3,9 +3,15 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useMutation } from "@tanstack/react-query";
+import { createFeedback } from "@/app/actions";
 
 const FeedbackContainer = () => {
   const [input, setInput] = useState<string>("");
+
+  const { mutate, error, isPending } = useMutation({
+    mutationFn: createFeedback,
+  });
 
   return (
     <div className="mt-12 flex flex-col gap-2">
@@ -16,8 +22,15 @@ const FeedbackContainer = () => {
           className="bg-white min-w-64"
           placeholder="Enter feedback here..."
         />
-        <Button>Create</Button>
+        <Button
+          disabled={isPending}
+          onClick={() => mutate({ feedbackName: input })}
+        >
+          Create
+        </Button>
       </div>
+
+      {error ? <p className="text-sm text-red-600">e{error.message}</p> : null}
     </div>
   );
 };
